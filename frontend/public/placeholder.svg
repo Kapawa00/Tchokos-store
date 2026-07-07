@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="800" viewBox="0 0 640 800">
+  <rect width="640" height="800" fill="#F6F1E9"/>
+  <rect x="220" y="300" width="200" height="200" rx="8" fill="#E5DCCD"/>
+  <path d="M270 370 l50-50 30 30 20-20 50 50 H270Z" fill="#B89A5E" opacity="0.6"/>
+  <circle cx="350" cy="340" r="18" fill="#B89A5E" opacity="0.6"/>
+  <text x="320" y="540" font-family="serif" font-size="18" fill="#6E6258" text-anchor="middle">Tchokos SARL</text>
+</svg>

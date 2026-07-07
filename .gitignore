@@ -1,0 +1,6 @@
+# État local de l'outillage (non partagé entre postes).
+.claude/
+
+# OS
+Thumbs.db
+.DS_Store

@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+:root {
+  /* Charte graphique "Cuir & Crème" — voir CLAUDE.md */
+  --color-cream: #f6f1e9;
+  --color-offwhite: #fcfaf6;
+  --color-espresso: #2a211b;
+  --color-taupe: #6e6258;
+  --color-cognac: #9c6b3f;
+  --color-camel: #c89b6a;
+  --color-brass: #b89a5e;
+  --color-bordeaux: #7a3b3b;
+  --color-sage: #5b6b57;
+  --color-sand: #e5dccd;
+}
+
+@theme inline {
+  --color-cream: var(--color-cream);
+  --color-offwhite: var(--color-offwhite);
+  --color-espresso: var(--color-espresso);
+  --color-taupe: var(--color-taupe);
+  --color-cognac: var(--color-cognac);
+  --color-camel: var(--color-camel);
+  --color-brass: var(--color-brass);
+  --color-bordeaux: var(--color-bordeaux);
+  --color-sage: var(--color-sage);
+  --color-sand: var(--color-sand);
+
+  /* Polices : titres (display) = Playfair Display, texte (body) = Jost */
+  --font-display: var(--font-playfair-display);
+  --font-body: var(--font-jost);
+
+  /* Base d'espacement Tailwind (4px) conservée : la grille 8px de la charte
+     correspond aux pas pairs (gap-2 = 8px, gap-4 = 16px, gap-8 = 32px...),
+     tout en permettant les valeurs exactes 14px/28px des boutons (py-3.5/px-7). */
+
+  /* Rayons par usage : boutons 4px, cartes 6px, modales 8px */
+  --radius-button: 4px;
+  --radius-card: 6px;
+  --radius-modal: 8px;
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-espresso);
+  font-family: var(--font-body), sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display), serif;
+}
