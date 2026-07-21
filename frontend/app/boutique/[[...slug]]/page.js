@@ -6,9 +6,13 @@ import CategoryBanner from "@/components/catalog/CategoryBanner";
 import FiltersClient from "@/components/catalog/FiltersClient";
 import ProductsSection from "@/components/catalog/ProductsSection";
 
-// ISR : pages collection mises en cache 5 min côté serveur.
-export const dynamicParams = true;
-export const revalidate = 300;
+// Page rendue à la demande (searchParams pour les filtres = rendu dynamique
+// obligatoire côté Next.js). Le cache 5 min reste assuré au niveau des appels
+// API (cf. REVALIDATE.categories / REVALIDATE.products dans lib/catalog.js),
+// donc la fraîcheur des données ne dépend pas d'un cache de route ici.
+// ⚠️ Ne pas réintroduire generateStaticParams() sur cette route : combiné à la
+// lecture de searchParams, cela déclenche une erreur DYNAMIC_SERVER_USAGE au
+// moment du build/reval (searchParams force le rendu dynamique par requête).
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -52,20 +56,6 @@ function buildBreadcrumb(family, section) {
     items.push({ label: family.name });
   }
   return items;
-}
-
-// ─── Génération des pages statiques ──────────────────────────────────────────
-
-export async function generateStaticParams() {
-  const categories = await getCategories();
-  const paths = [{}]; // /boutique (slug absent = optionnel)
-  for (const cat of categories) {
-    paths.push({ slug: [cat.slug] });
-    for (const child of cat.children ?? []) {
-      paths.push({ slug: [cat.slug, child.slug] });
-    }
-  }
-  return paths;
 }
 
 export async function generateMetadata({ params }) {
