@@ -6,8 +6,9 @@ import Link from "next/link";
  * @param {Object} props
  * @param {boolean} [props.hasFilters] - Vrai si des filtres actifs peuvent expliquer le résultat vide.
  * @param {string} [props.resetHref] - URL permettant d'effacer tous les filtres.
+ * @param {string} [props.message] - Remplace le message par défaut (ex. contexte de recherche).
  */
-export default function EmptyState({ hasFilters = false, resetHref }) {
+export default function EmptyState({ hasFilters = false, resetHref, message }) {
   return (
     <div className="flex flex-col items-center py-20 text-center">
       <div
@@ -23,9 +24,10 @@ export default function EmptyState({ hasFilters = false, resetHref }) {
       </div>
       <p className="font-display text-2xl text-espresso">Aucun article trouvé</p>
       <p className="mt-2 max-w-xs font-body text-sm text-taupe">
-        {hasFilters
-          ? "Aucun article ne correspond à vos critères. Essayez de modifier ou de supprimer certains filtres."
-          : "Cette catégorie ne contient pas encore d'articles."}
+        {message ??
+          (hasFilters
+            ? "Aucun article ne correspond à vos critères. Essayez de modifier ou de supprimer certains filtres."
+            : "Cette catégorie ne contient pas encore d'articles.")}
       </p>
       {hasFilters && resetHref && (
         <Link

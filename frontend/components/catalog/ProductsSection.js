@@ -33,8 +33,9 @@ function toCardProps(p) {
  * @param {import("@/lib/types").Product[]} props.initialProducts
  * @param {import("@/lib/types").PaginationMeta|null} props.pagination
  * @param {import("@/lib/types").ProductFilters} props.apiFilters
+ * @param {string} [props.emptyMessage] - Remplace le message par défaut de l'état vide.
  */
-export default function ProductsSection({ initialProducts, pagination, apiFilters }) {
+export default function ProductsSection({ initialProducts, pagination, apiFilters, emptyMessage }) {
   const pathname = usePathname();
   const [products, setProducts] = useState(initialProducts);
   const [currentPage, setCurrentPage] = useState(pagination?.current_page ?? 1);
@@ -70,6 +71,7 @@ export default function ProductsSection({ initialProducts, pagination, apiFilter
       <EmptyState
         hasFilters={hasActiveFilters}
         resetHref={hasActiveFilters ? pathname : undefined}
+        message={emptyMessage}
       />
     );
   }
