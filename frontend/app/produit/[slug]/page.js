@@ -11,15 +11,13 @@ import ProductAccordion from "@/components/product/ProductAccordion";
 import SimilarProducts from "@/components/product/SimilarProducts";
 import MobileActionBar from "@/components/product/MobileActionBar";
 
-// ISR : fiche produit revalidée toutes les 10 min.
-// dynamicParams = true : pages générées à la demande si le slug n'était pas connu au build.
-export const revalidate = 600;
-export const dynamicParams = true;
-
-export async function generateStaticParams() {
-  // Pas de pré-génération au build : ISR à la demande.
-  return [];
-}
+// Page rendue à la demande : getServerUser() lit les cookies (next/headers),
+// une Request-time API, ce qui force le rendu dynamique par requête — comme
+// searchParams sur /boutique. Combiner ça avec generateStaticParams (SSG)
+// déclenche une erreur DYNAMIC_SERVER_USAGE, d'où sa suppression ici. Le
+// cache 10 min reste assuré au niveau de l'appel API (REVALIDATE.product
+// dans lib/catalog.js), donc la fraîcheur des données ne dépend pas d'un
+// cache de route.
 
 // ─── Métadonnées SEO ──────────────────────────────────────────────────────────
 
