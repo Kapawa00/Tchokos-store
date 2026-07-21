@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { usePathname } from "next/navigation";
 import ProductCard from "@/components/ui/ProductCard";
 import EmptyState from "./EmptyState";
 import { apiFetch } from "@/lib/http";
@@ -34,6 +35,7 @@ function toCardProps(p) {
  * @param {import("@/lib/types").ProductFilters} props.apiFilters
  */
 export default function ProductsSection({ initialProducts, pagination, apiFilters }) {
+  const pathname = usePathname();
   const [products, setProducts] = useState(initialProducts);
   const [currentPage, setCurrentPage] = useState(pagination?.current_page ?? 1);
   const [lastPage] = useState(pagination?.last_page ?? 1);
