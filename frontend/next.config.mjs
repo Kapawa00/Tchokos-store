@@ -1,3 +1,10 @@
+// Origine du backend Laravel (API + médias stockage), dérivée de la même
+// variable que le proxy /admin ci-dessous, pour rester en phase avec
+// l'environnement (dev local vs production Railway) sans domaine en dur.
+const backendOrigin = new URL(
+  (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api").replace(/\/api\/?$/, "")
+);
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -5,6 +12,14 @@ const nextConfig = {
       { protocol: "http",  hostname: "localhost", port: "8000" },
       { protocol: "https", hostname: "picsum.photos" },
       { protocol: "https", hostname: "loremflickr.com" },
+      // Médias produits servis par le backend (storage Laravel) : nécessaire
+      // dès que NEXT_PUBLIC_API_URL pointe vers un vrai hôte (ex. Railway),
+      // sans quoi l'optimiseur d'image de Next.js rejette les URLs avec 400.
+      {
+        protocol: backendOrigin.protocol.replace(":", ""),
+        hostname: backendOrigin.hostname,
+        ...(backendOrigin.port ? { port: backendOrigin.port } : {}),
+      },
     ],
     dangerouslyAllowSVG: true,
     // Le backend Laravel tourne sur localhost:8000 en dev (cf. remotePatterns
@@ -21,8 +36,7 @@ const nextConfig = {
   // au backend (port 8000) → l'admin reste sur le même port que le frontend.
   // En production, c'est nginx/Caddy qui joue ce rôle.
   async rewrites() {
-    const backend = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api")
-      .replace(/\/api\/?$/, "");
+    const backend = backendOrigin.origin;
 
     return {
       // beforeFiles : prioritaire sur le routage Next.js et les fichiers statiques.
