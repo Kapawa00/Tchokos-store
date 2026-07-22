@@ -21,7 +21,14 @@ class SendOrderCreatedNotifications implements ShouldQueue
         $order = $event->order;
 
         if ($order->customer_email) {
-            Notification::route('mail', $order->customer_email)->notify(new OrderCreatedMail($order));
+            try {
+                Notification::route('mail', $order->customer_email)->notify(new OrderCreatedMail($order));
+            } catch (\Throwable $e) {
+                // Comme pour le push : un e-mail qui ne part pas (SMTP absent
+                // ou mal configuré) ne doit jamais faire échouer la commande,
+                // déjà enregistrée en base à ce stade.
+                Log::warning('Échec de l\'e-mail de confirmation de commande : '.$e->getMessage());
+            }
         }
 
         try {
