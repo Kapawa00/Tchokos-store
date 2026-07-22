@@ -76,7 +76,8 @@ class MediaRelationManager extends RelationManager
                 ->columns(2)
                 ->schema([
                     Forms\Components\Toggle::make('is_featured_reel')
-                        ->label('Afficher dans le mur de reels'),
+                        ->label('Afficher dans le mur de reels')
+                        ->default(true),
                     Forms\Components\TextInput::make('reel_position')
                         ->label('Position dans le mur')
                         ->numeric(),
