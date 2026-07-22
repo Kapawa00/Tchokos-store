@@ -22,7 +22,7 @@ export default function WholesaleBanner() {
           </p>
         </div>
         <Link
-          href="/grossiste"
+          href="/vente-en-gros"
           className="inline-flex shrink-0 items-center justify-center rounded-button bg-cream px-7 py-3.5 font-body font-medium text-espresso transition-colors hover:bg-camel focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream focus-visible:ring-offset-2 focus-visible:ring-offset-espresso"
         >
           Tarifs grossistes

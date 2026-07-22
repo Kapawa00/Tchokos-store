@@ -57,7 +57,7 @@ export default function WholesaleCallout({ isApproved, isPending }) {
         revendeurs et boutiques.
       </p>
       <Link
-        href="/grossiste"
+        href="/vente-en-gros"
         className="mt-3 inline-flex items-center gap-1 font-body text-sm font-medium text-cognac transition-colors hover:text-espresso focus-visible:outline-none focus-visible:underline"
       >
         Voir les tarifs en gros
