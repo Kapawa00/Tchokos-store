@@ -202,7 +202,16 @@ class OrderController extends Controller
                     ->update(['status' => 'confirmed']);
             }
 
-            OrderStatusUpdated::dispatch($order, $previousStatus);
+            try {
+                OrderStatusUpdated::dispatch($order, $previousStatus);
+            } catch (\Throwable $e) {
+                Log::error("[ORDER_STATUS_EVENT_FAILED] {$e->getMessage()}", [
+                    'order_reference' => $order->reference,
+                    'exception' => $e::class,
+                    'file' => $e->getFile().':'.$e->getLine(),
+                    'trace' => $e->getTraceAsString(),
+                ]);
+            }
         }
 
         return new OrderResource($order->load('items'));

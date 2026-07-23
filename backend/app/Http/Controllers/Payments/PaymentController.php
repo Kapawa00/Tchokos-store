@@ -27,9 +27,7 @@ class PaymentController extends Controller
 {
     use AuthorizesOrderAccess;
 
-    public function __construct(private readonly PaymentProviderManager $providers)
-    {
-    }
+    public function __construct(private readonly PaymentProviderManager $providers) {}
 
     /**
      * Démarre un paiement Orange Money / MoMo pour une commande.
@@ -103,7 +101,20 @@ class PaymentController extends Controller
                 $previousStatus = $order->status;
                 $order->update(['status' => OrderStatus::Paid]);
 
-                OrderStatusUpdated::dispatch($order, $previousStatus);
+                try {
+                    // Le paiement est déjà enregistré à ce stade : un
+                    // listener de notification qui plante ne doit jamais
+                    // annuler la confirmation elle-même (cf. OrderController
+                    // ::store pour le même garde côté création de commande).
+                    OrderStatusUpdated::dispatch($order, $previousStatus);
+                } catch (\Throwable $e) {
+                    Log::error("[ORDER_STATUS_EVENT_FAILED] {$e->getMessage()}", [
+                        'order_reference' => $order->reference,
+                        'exception' => $e::class,
+                        'file' => $e->getFile().':'.$e->getLine(),
+                        'trace' => $e->getTraceAsString(),
+                    ]);
+                }
             }
         });
 

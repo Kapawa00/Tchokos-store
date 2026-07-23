@@ -16,9 +16,7 @@ use Illuminate\Support\Facades\Notification;
 
 class SendOrderStatusNotifications implements ShouldQueue
 {
-    public function __construct(private readonly PushNotifier $pushNotifier)
-    {
-    }
+    public function __construct(private readonly PushNotifier $pushNotifier) {}
 
     public function handle(OrderStatusUpdated $event): void
     {
@@ -27,7 +25,17 @@ class SendOrderStatusNotifications implements ShouldQueue
         $mail = $this->mailForStatus($order);
 
         if ($mail && $order->customer_email) {
-            Notification::route('mail', $order->customer_email)->notify($mail);
+            try {
+                Notification::route('mail', $order->customer_email)->notify($mail);
+            } catch (\Throwable $e) {
+                // Voir SendOrderCreatedNotifications : un échec d'e-mail (SMTP
+                // absent) ne doit jamais faire échouer le changement de
+                // statut — critique ici, car ce handle() tourne à l'intérieur
+                // de la transaction DB de PaymentController::webhook : sans ce
+                // garde, une exception ici annule aussi la confirmation du
+                // paiement elle-même.
+                Log::warning('Échec de l\'e-mail de mise à jour de statut : '.$e->getMessage());
+            }
         }
 
         if ($order->user) {
