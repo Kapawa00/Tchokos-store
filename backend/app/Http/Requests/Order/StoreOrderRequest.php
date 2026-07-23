@@ -19,13 +19,15 @@ class StoreOrderRequest extends FormRequest
     public function rules(): array
     {
         // Un utilisateur connecté peut laisser ses coordonnées de profil
-        // faire foi ; un invité doit les renseigner explicitement.
-        $hasUser = (bool) $this->user('sanctum');
+        // faire foi, mais seulement si son profil les renseigne déjà : les
+        // colonnes orders.customer_name/customer_phone sont NOT NULL, donc un
+        // profil incomplet doit quand même forcer la saisie côté requête.
+        $user = $this->user('sanctum');
 
         return [
             'channel' => ['required', Rule::in(array_column(OrderChannel::cases(), 'value'))],
-            'customer_name' => [$hasUser ? 'nullable' : 'required', 'string', 'max:255'],
-            'customer_phone' => [$hasUser ? 'nullable' : 'required', 'string', 'max:20'],
+            'customer_name' => [Rule::requiredIf(! $user?->name), 'string', 'max:255'],
+            'customer_phone' => [Rule::requiredIf(! $user?->phone), 'string', 'max:20'],
             'customer_email' => ['nullable', 'email', 'max:255'],
             'notes' => ['nullable', 'string', 'max:1000'],
         ];

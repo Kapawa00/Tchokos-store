@@ -52,12 +52,19 @@ class Order extends Model
     /**
      * Référence lisible du type TCK-2026-000123 : préfixe boutique, année en
      * cours, et numéro de séquence remis à zéro chaque année.
+     *
+     * Verrouille les lignes de l'année (lockForUpdate) le temps de la
+     * transaction : sans ça, deux commandes créées au même instant (double
+     * clic, requêtes concurrentes) peuvent lire le même count() et tenter
+     * d'insérer la même référence, ce qui casse la contrainte unique et fait
+     * échouer la commande avec une 500 (déjà observé en prod : deux POST
+     * /api/orders à la même seconde).
      */
     public static function generateReference(): string
     {
         $year = now()->year;
 
-        $sequence = static::whereYear('created_at', $year)->count() + 1;
+        $sequence = static::whereYear('created_at', $year)->lockForUpdate()->count() + 1;
 
         return sprintf('TCK-%d-%06d', $year, $sequence);
     }
