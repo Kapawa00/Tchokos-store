@@ -10,13 +10,16 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\StoreOrderRequest;
 use App\Http\Requests\Order\UpdateOrderStatusRequest;
 use App\Http\Resources\OrderResource;
+use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Models\Variant;
 use App\Services\CartResolver;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class OrderController extends Controller
@@ -26,9 +29,7 @@ class OrderController extends Controller
     /** Frais de livraison forfaitaire (FCFA), en l'absence de calcul par zone. */
     private const SHIPPING_FEE = 1500;
 
-    public function __construct(private readonly CartResolver $cartResolver)
-    {
-    }
+    public function __construct(private readonly CartResolver $cartResolver) {}
 
     /**
      * Commandes de l'utilisateur connecté.
@@ -57,7 +58,41 @@ class OrderController extends Controller
         $user = $request->user('sanctum');
         $data = $request->validated();
 
-        $order = DB::transaction(function () use ($cart, $user, $data) {
+        try {
+            $order = $this->createOrderFromCart($cart, $user, $data);
+        } catch (ValidationException $e) {
+            throw $e;
+        } catch (\Throwable $e) {
+            // Repère facilement identifiable dans les logs Railway (stderr) :
+            // sans ce log, un échec de commande ne laissait qu'une ligne
+            // d'accès générique ("/api/orders ~0.15ms"), la vraie exception
+            // restant dans storage/logs/laravel.log, invisible depuis "View
+            // logs" (qui ne capture que stdout/stderr du process).
+            Log::error("[ORDER_CREATE_FAILED] {$e->getMessage()}", [
+                'user_id' => $user?->id,
+                'cart_id' => $cart->id,
+                'items_count' => $cart->items->count(),
+                'variant_ids' => $cart->items->pluck('variant_id')->all(),
+                'channel' => $data['channel'] ?? null,
+                'exception' => $e::class,
+                'file' => $e->getFile().':'.$e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            throw $e;
+        }
+
+        OrderCreated::dispatch($order);
+
+        return new OrderResource($order->load('items'));
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    private function createOrderFromCart(Cart $cart, ?User $user, array $data): Order
+    {
+        return DB::transaction(function () use ($cart, $user, $data) {
             // Verrouille les variantes concernées pour éviter une survente en
             // cas de requêtes de commande concurrentes sur le même stock.
             $lockedVariants = Variant::whereIn('id', $cart->items->pluck('variant_id'))
@@ -110,10 +145,6 @@ class OrderController extends Controller
 
             return $order;
         });
-
-        OrderCreated::dispatch($order);
-
-        return new OrderResource($order->load('items'));
     }
 
     /**
