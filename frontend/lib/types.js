@@ -25,6 +25,7 @@
  * @property {CategoryType} type
  * @property {number} position
  * @property {string|null} [description]
+ * @property {string|null} [image_url] - Première image des produits de la catégorie (repli des cartes/bannières).
  * @property {string|null} [banner_image_url]
  * @property {string|null} [banner_video_url]
  * @property {Category[]} [children]
