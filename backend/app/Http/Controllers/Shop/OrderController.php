@@ -82,7 +82,21 @@ class OrderController extends Controller
             throw $e;
         }
 
-        OrderCreated::dispatch($order);
+        try {
+            // La commande est déjà enregistrée à ce stade : quoi qu'il arrive
+            // en aval (listener de notification mal configuré, dépendance
+            // manquante...), ça ne doit jamais transformer une commande
+            // réussie en 500 côté client (cf. déjà appliqué à l'e-mail de
+            // confirmation dans SendOrderCreatedNotifications).
+            OrderCreated::dispatch($order);
+        } catch (\Throwable $e) {
+            Log::error("[ORDER_CREATED_EVENT_FAILED] {$e->getMessage()}", [
+                'order_reference' => $order->reference,
+                'exception' => $e::class,
+                'file' => $e->getFile().':'.$e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+        }
 
         return new OrderResource($order->load('items'));
     }

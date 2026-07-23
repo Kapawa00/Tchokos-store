@@ -31,13 +31,27 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(WebPush::class, function () {
-            return new WebPush([
-                'VAPID' => [
+            // VAPID::validate() (appelée par le constructeur dès qu'on lui
+            // passe une clé 'VAPID') lève une \ErrorException si publicKey/
+            // privateKey sont absentes — ce qui arrive tant que les vraies
+            // clés VAPID ne sont pas configurées en prod. Sans cette garde,
+            // la première commande qui déclenche une notification push
+            // admin fait planter OrderCreated::dispatch() avant même que
+            // SendOrderCreatedNotifications::handle() ne s'exécute (donc
+            // avant ses propres try/catch), transformant une commande
+            // pourtant bien enregistrée en 500 côté client.
+            $publicKey = config('webpush.vapid.public_key');
+            $privateKey = config('webpush.vapid.private_key');
+
+            $auth = ($publicKey && $privateKey)
+                ? ['VAPID' => [
                     'subject' => config('webpush.vapid.subject'),
-                    'publicKey' => config('webpush.vapid.public_key'),
-                    'privateKey' => config('webpush.vapid.private_key'),
-                ],
-            ]);
+                    'publicKey' => $publicKey,
+                    'privateKey' => $privateKey,
+                ]]
+                : [];
+
+            return new WebPush($auth);
         });
 
         // Un seul écran de connexion (vitrine) : après déconnexion du panneau
@@ -59,11 +73,12 @@ class AppServiceProvider extends ServiceProvider
         // Redirige vers le frontend plutôt que /password/reset de Laravel.
         ResetPassword::createUrlUsing(function ($notifiable, string $token) {
             $frontend = env('FRONTEND_URL', 'http://localhost:3000');
+
             return $frontend
-                . '/compte/reinitialiser-mot-de-passe?token='
-                . $token
-                . '&email='
-                . urlencode($notifiable->getEmailForPasswordReset());
+                .'/compte/reinitialiser-mot-de-passe?token='
+                .$token
+                .'&email='
+                .urlencode($notifiable->getEmailForPasswordReset());
         });
 
         // Un grossiste ne voit le prix de gros qu'une fois son wholesale_account approuvé.
