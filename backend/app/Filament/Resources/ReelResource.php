@@ -95,6 +95,14 @@ class ReelResource extends Resource
                 Tables\Filters\TernaryFilter::make('is_featured_reel')
                     ->label('Affichées sur l\'accueil')
                     ->default(true),
+            ])
+            ->actions([
+                Tables\Actions\DeleteAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
             ]);
     }
 
