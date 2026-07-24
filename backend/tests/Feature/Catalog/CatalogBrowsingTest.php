@@ -3,6 +3,7 @@
 namespace Tests\Feature\Catalog;
 
 use App\Models\Category;
+use App\Models\Media;
 use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -53,5 +54,27 @@ class CatalogBrowsingTest extends TestCase
     public function test_unknown_product_slug_returns_404(): void
     {
         $this->getJson('/api/products/does-not-exist')->assertNotFound();
+    }
+
+    public function test_product_with_only_a_video_is_visible_and_uses_its_poster(): void
+    {
+        $product = Product::factory()->withoutMedia()->create();
+        Media::factory()->video()->for($product)->create(['poster_url' => 'produits/posters/reel.jpg']);
+
+        $show = $this->getJson("/api/products/{$product->slug}");
+        $show->assertOk();
+
+        $listing = $this->getJson('/api/products');
+        $listing->assertOk();
+        $entry = collect($listing->json('data'))->firstWhere('slug', $product->slug);
+        $this->assertNotNull($entry, 'Product with only a video should appear in the catalog listing.');
+        $this->assertSame('produits/posters/reel.jpg', $entry['primary_image']);
+    }
+
+    public function test_product_without_any_media_returns_404(): void
+    {
+        $product = Product::factory()->withoutMedia()->create();
+
+        $this->getJson("/api/products/{$product->slug}")->assertNotFound();
     }
 }

@@ -2,13 +2,14 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * Suggestion légère pour la recherche rapide (autocomplete).
  *
- * @mixin \App\Models\Product
+ * @mixin Product
  */
 class SearchSuggestionResource extends JsonResource
 {
@@ -22,7 +23,7 @@ class SearchSuggestionResource extends JsonResource
             'name' => $this->name,
             'slug' => $this->slug,
             'price' => $this->display_price,
-            'image' => $this->whenLoaded('primaryImage', fn () => optional($this->primaryImage)->url),
+            'image' => $this->primaryVisualUrl(),
         ];
     }
 }

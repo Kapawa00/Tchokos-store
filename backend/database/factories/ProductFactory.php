@@ -14,10 +14,10 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class ProductFactory extends Factory
 {
     /**
-     * Un produit sans photo réelle n'est jamais affiché publiquement
-     * (cf. ProductController) : on attache donc une image par défaut, comme
-     * le ferait un upload admin. Utiliser `withoutMedia()` pour tester
-     * explicitement le cas d'un produit incomplet.
+     * Un produit sans aucun média (photo ou vidéo) n'est jamais affiché
+     * publiquement (cf. ProductController) : on attache donc une image par
+     * défaut, comme le ferait un upload admin. Utiliser `withoutMedia()`
+     * pour tester explicitement le cas d'un produit incomplet.
      */
     public function configure(): static
     {

@@ -29,8 +29,8 @@ class ProductController extends Controller
         $query = Product::query()
             ->where('status', ProductStatus::Active)
             ->where('show_in_catalog', true)
-            ->whereHas('primaryImage')
-            ->with(['category:id,name,slug', 'primaryImage', 'variants:id,product_id,stock']);
+            ->whereHas('media')
+            ->with(['category:id,name,slug', 'primaryImage', 'primaryVideo', 'variants:id,product_id,stock']);
 
         $this->applyCategoryFilters($query, $request);
         $this->applyVariantFilters($query, $request);
@@ -55,17 +55,17 @@ class ProductController extends Controller
         $product = Product::query()
             ->where('slug', $slug)
             ->where('status', ProductStatus::Active)
-            ->whereHas('primaryImage')
+            ->whereHas('media')
             ->with(['category', 'variants', 'media'])
             ->firstOrFail();
 
         $similarProducts = Product::query()
             ->where('status', ProductStatus::Active)
             ->where('show_in_catalog', true)
-            ->whereHas('primaryImage')
+            ->whereHas('media')
             ->where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
-            ->with(['category:id,name,slug', 'primaryImage'])
+            ->with(['category:id,name,slug', 'primaryImage', 'primaryVideo'])
             ->inRandomOrder()
             ->limit(4)
             ->get();

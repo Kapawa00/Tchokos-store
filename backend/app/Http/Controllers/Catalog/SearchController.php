@@ -26,7 +26,7 @@ class SearchController extends Controller
             ->where('status', ProductStatus::Active)
             ->where('show_in_catalog', true)
             ->where('name', 'like', "%{$q}%")
-            ->with('primaryImage')
+            ->with(['primaryImage', 'primaryVideo'])
             ->orderBy('name')
             ->limit(8)
             ->get();

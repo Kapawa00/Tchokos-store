@@ -121,11 +121,12 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('primaryImage.url')
+                Tables\Columns\ImageColumn::make('primary_visual')
                     ->label('Visuel')
                     ->disk('public')
                     ->height(48)
-                    ->square(),
+                    ->square()
+                    ->state(fn (Product $r) => $r->primaryVisualUrl()),
 
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nom')

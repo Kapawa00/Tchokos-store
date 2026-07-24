@@ -17,11 +17,9 @@ use Illuminate\Validation\ValidationException;
 
 class CartController extends Controller
 {
-    private const ITEM_RELATIONS = 'items.variant.product.primaryImage';
+    private const ITEM_RELATIONS = ['items.variant.product.primaryImage', 'items.variant.product.primaryVideo'];
 
-    public function __construct(private readonly CartResolver $cartResolver)
-    {
-    }
+    public function __construct(private readonly CartResolver $cartResolver) {}
 
     public function show(Request $request): JsonResponse
     {

@@ -2,11 +2,12 @@
 
 namespace App\Http\Resources;
 
+use App\Models\CartItem;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin \App\Models\CartItem
+ * @mixin CartItem
  */
 class CartItemResource extends JsonResource
 {
@@ -32,7 +33,7 @@ class CartItemResource extends JsonResource
                 'id' => $this->variant->product->id,
                 'name' => $this->variant->product->name,
                 'slug' => $this->variant->product->slug,
-                'image' => optional($this->variant->product->primaryImage)->url,
+                'image' => $this->variant->product->primaryVisualUrl(),
             ],
         ];
     }

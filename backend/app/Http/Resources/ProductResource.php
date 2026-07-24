@@ -3,12 +3,13 @@
 namespace App\Http\Resources;
 
 use App\Enums\PromotionType;
+use App\Models\Product;
 use App\Models\Promotion;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin \App\Models\Product
+ * @mixin Product
  */
 class ProductResource extends JsonResource
 {
@@ -38,7 +39,7 @@ class ProductResource extends JsonResource
             'promo_price' => $this->promoPrice(),
             'is_new' => $this->is_new,
             'in_stock' => $this->whenLoaded('variants', fn () => $this->variants->contains(fn ($variant) => $variant->stock > 0)),
-            'primary_image' => $this->whenLoaded('primaryImage', fn () => optional($this->primaryImage)->url),
+            'primary_image' => $this->primaryVisualUrl(),
             'badge' => $this->badge(),
         ];
     }

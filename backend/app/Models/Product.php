@@ -70,6 +70,27 @@ class Product extends Model
     }
 
     /**
+     * Première vidéo du produit (par position) — sert de repli visuel
+     * (poster) pour un produit qui n'a que des vidéos, sans photo isolée.
+     */
+    public function primaryVideo(): HasOne
+    {
+        return $this->hasOne(Media::class)->where('type', MediaType::Video)->oldestOfMany('position');
+    }
+
+    /**
+     * Visuel de repli utilisé partout où une seule image représente le
+     * produit (cartes, panier, recherche...) : la première photo si elle
+     * existe, sinon le poster de la première vidéo. Un produit n'a pas
+     * besoin d'une photo isolée pour être affiché — beaucoup n'ont que des
+     * reels (cf. contexte métier Tchokos).
+     */
+    public function primaryVisualUrl(): ?string
+    {
+        return $this->primaryImage?->url ?? $this->primaryVideo?->poster_url;
+    }
+
+    /**
      * Expression SQL du prix vu par l'utilisateur courant : prix de gros pour
      * un grossiste approuvé (si défini), sinon prix détail. Utilisée pour le
      * filtrage par fourchette de prix et le tri par prix dans le catalogue.
