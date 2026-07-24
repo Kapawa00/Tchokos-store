@@ -12,8 +12,26 @@ use App\Services\FrontendRevalidator;
  */
 class MediaObserver
 {
-    public function __construct(private readonly FrontendRevalidator $revalidator)
+    public function __construct(private readonly FrontendRevalidator $revalidator) {}
+
+    /**
+     * Un seul média peut être la vidéo héro à la fois : en activer une
+     * désactive automatiquement toute autre, pour ne jamais avoir deux
+     * vidéos « héro » en même temps sans intervention manuelle.
+     */
+    public function saving(Media $media): void
     {
+        if (! $media->is_hero) {
+            return;
+        }
+
+        $query = Media::where('is_hero', true);
+
+        if ($media->exists) {
+            $query->where('id', '!=', $media->id);
+        }
+
+        $query->update(['is_hero' => false]);
     }
 
     public function saved(Media $media): void

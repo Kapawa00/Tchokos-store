@@ -96,6 +96,25 @@ export async function getReels() {
 }
 
 /**
+ * Vidéo de fond du hero de l'accueil : sélection explicite (is_hero) côté
+ * admin, indépendante du mur de reels — activer/désactiver un reel n'y
+ * touche pas. `null` tant qu'aucune vidéo n'a été désignée héro.
+ *
+ * @returns {Promise<import("@/lib/types").Reel|null>}
+ */
+export async function getHeroReel() {
+  try {
+    const json = await apiFetch("/reels/hero", {
+      revalidate: REVALIDATE.reels,
+      tags: ["reels"],
+    });
+    return json?.data ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Bannières actives de la page d'accueil, ordonnées par position. Repli sur
  * `[]` si l'API est indisponible.
  *

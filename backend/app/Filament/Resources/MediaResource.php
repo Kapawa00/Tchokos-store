@@ -61,6 +61,10 @@ class MediaResource extends Resource
                 ->columnSpanFull(),
             Forms\Components\TextInput::make('position')->label('Ordre dans le produit')->numeric()->default(0)->required(),
             Forms\Components\Toggle::make('is_featured_reel')->label('Dans le mur de reels'),
+            Forms\Components\Toggle::make('is_hero')
+                ->label('Vidéo héro (fond de l\'accueil)')
+                ->helperText('Indépendant du mur de reels : une seule vidéo à la fois peut être héro.')
+                ->visible(fn (Forms\Get $get) => $get('type') === MediaType::Video->value),
         ]);
     }
 
@@ -80,6 +84,7 @@ class MediaResource extends Resource
                     ->formatStateUsing(fn (MediaType $state) => $state === MediaType::Video ? 'Vidéo' : 'Image')
                     ->color(fn (MediaType $state) => $state === MediaType::Video ? 'warning' : 'gray'),
                 Tables\Columns\IconColumn::make('is_featured_reel')->label('Reel')->boolean(),
+                Tables\Columns\IconColumn::make('is_hero')->label('Héro')->boolean(),
                 Tables\Columns\TextColumn::make('position')->label('Ordre')->sortable(),
             ])
             ->filters([

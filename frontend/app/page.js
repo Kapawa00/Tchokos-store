@@ -1,4 +1,4 @@
-import { getCategories, getProducts, getReels, getBanners } from "@/lib/api";
+import { getCategories, getProducts, getReels, getHeroReel, getBanners } from "@/lib/api";
 import HeroReel from "@/components/home/HeroReel";
 import HomeBanner from "@/components/home/HomeBanner";
 import FamilyGrid from "@/components/home/FamilyGrid";
@@ -31,10 +31,11 @@ async function fetchNewArrivals() {
 }
 
 export default async function Home() {
-  const [categories, newArrivals, reels, banners] = await Promise.all([
+  const [categories, newArrivals, reels, heroReel, banners] = await Promise.all([
     getCategories(),
     fetchNewArrivals(),
     getReels(),
+    getHeroReel(),
     getBanners(),
   ]);
 
@@ -44,7 +45,7 @@ export default async function Home() {
   return (
     <>
       <HeroReel
-        reel={reels[0] ?? null}
+        reel={heroReel}
         title="L'élégance en cuir, à portée de main"
         slogan="« C'est difficile, mais possible »"
       />

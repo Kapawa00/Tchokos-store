@@ -34,6 +34,7 @@ Route::middleware('auth.optional')->group(function () {
     Route::get('/products', [ProductController::class, 'index']);
     Route::get('/products/{slug}', [ProductController::class, 'show']);
     Route::get('/reels', [ReelController::class, 'index']);
+    Route::get('/reels/hero', [ReelController::class, 'hero']);
     Route::get('/banners', [BannerController::class, 'index']);
     Route::get('/search', [SearchController::class, 'index']);
 

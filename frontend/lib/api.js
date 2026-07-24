@@ -20,7 +20,15 @@ export {
 } from "@/lib/auth/cookies";
 
 // Catalogue
-export { getCategories, getProducts, getProduct, getReels, getBanners, search } from "@/lib/catalog";
+export {
+  getCategories,
+  getProducts,
+  getProduct,
+  getReels,
+  getHeroReel,
+  getBanners,
+  search,
+} from "@/lib/catalog";
 
 // Formatage & médias (helpers d'affichage)
 export { formatPrice } from "@/lib/format";

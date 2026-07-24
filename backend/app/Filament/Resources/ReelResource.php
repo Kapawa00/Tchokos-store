@@ -72,6 +72,11 @@ class ReelResource extends Resource
             Forms\Components\TextInput::make('reel_position')
                 ->label('Position dans le mur')
                 ->numeric(),
+
+            Forms\Components\Toggle::make('is_hero')
+                ->label('Vidéo héro (fond de l\'accueil)')
+                ->helperText('Indépendant du mur de reels : une seule vidéo à la fois peut être héro, activer celle-ci désactive automatiquement l\'ancienne.')
+                ->columnSpanFull(),
         ]);
     }
 
@@ -84,6 +89,7 @@ class ReelResource extends Resource
                 Tables\Columns\ImageColumn::make('poster_url')->label('Aperçu')->disk('public')->height(64),
                 Tables\Columns\ToggleColumn::make('is_featured_reel')->label('Dans le mur'),
                 Tables\Columns\TextColumn::make('reel_position')->label('Position')->sortable(),
+                Tables\Columns\ToggleColumn::make('is_hero')->label('Héro accueil'),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_featured_reel')

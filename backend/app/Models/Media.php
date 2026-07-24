@@ -21,6 +21,7 @@ class Media extends Model
         'position',
         'is_featured_reel',
         'reel_position',
+        'is_hero',
     ];
 
     protected function casts(): array
@@ -29,6 +30,7 @@ class Media extends Model
             'type' => MediaType::class,
             'is_featured_reel' => 'boolean',
             'reel_position' => 'integer',
+            'is_hero' => 'boolean',
         ];
     }
 
