@@ -5,6 +5,7 @@ import { addToCart } from "@/lib/cart";
 import { useCart } from "@/components/cart/CartProvider";
 import { buildWhatsAppLink, buildProductMessage } from "@/lib/whatsapp";
 import { formatPrice } from "@/lib/format";
+import { mediaUrl } from "@/lib/media";
 import { MinusIcon, PlusIcon, WhatsAppIcon } from "@/components/icons";
 import FavoriteButton from "@/components/account/FavoriteButton";
 
@@ -312,7 +313,7 @@ export default function AddToCartSection({ product }) {
               name: product.name,
               slug: product.slug,
               price: product.price,
-              image: product.media?.find((m) => m.type === "image")?.url ?? null,
+              image: mediaUrl(product.media?.find((m) => m.type === "image")?.url, null),
             }}
           />
           <button

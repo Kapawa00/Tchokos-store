@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getFavorites, removeFavorite } from "@/lib/favorites";
 import { formatPrice } from "@/lib/format";
+import { mediaUrl } from "@/lib/media";
 import { HeartIcon, TrashIcon } from "@/components/icons";
 
 /**
@@ -68,8 +69,14 @@ export default function FavoritesList() {
           {/* Image */}
           <Link href={`/produits/${item.slug}`} className="shrink-0">
             <div className="relative h-20 w-16 overflow-hidden rounded-button bg-sand/40">
-              {item.image ? (
-                <Image src={item.image} alt={item.name} fill className="object-cover" sizes="64px" />
+              {mediaUrl(item.image, null) ? (
+                <Image
+                  src={mediaUrl(item.image, null)}
+                  alt={item.name}
+                  fill
+                  className="object-cover"
+                  sizes="64px"
+                />
               ) : (
                 <div className="h-full w-full bg-sand/60" />
               )}
