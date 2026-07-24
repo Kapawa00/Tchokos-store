@@ -14,25 +14,21 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 class ReelController extends Controller
 {
     /**
-     * « Mur de reels » de l'accueil : vidéos mises en avant (is_featured_reel),
-     * ordonnées par reel_position. À défaut de sélection, repli sur les vidéos
-     * les plus récentes pour ne jamais présenter un mur vide.
+     * « Mur de reels » de l'accueil : uniquement les vidéos explicitement
+     * marquées is_featured_reel, ordonnées par reel_position. Aucun repli sur
+     * les vidéos les plus récentes : une vidéo ajoutée pour un produit ou pour
+     * le hero ne doit jamais apparaître ici sans un choix explicite de
+     * l'admin. Le mur peut donc être vide — géré côté frontend.
      * Vitrine autonome : une vidéo n'a pas besoin d'être rattachée à un
      * produit ; si elle l'est, ce produit doit être actif pour apparaître.
      */
     public function index(): AnonymousResourceCollection
     {
-        $base = $this->visibleVideos();
-
-        $featured = (clone $base)
+        $reels = $this->visibleVideos()
             ->where('is_featured_reel', true)
             ->orderBy('reel_position')
             ->limit(12)
             ->get();
-
-        $reels = $featured->isNotEmpty()
-            ? $featured
-            : (clone $base)->latest('id')->limit(12)->get();
 
         return ReelResource::collection($reels);
     }
