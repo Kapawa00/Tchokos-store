@@ -11,6 +11,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 class CategoryResource extends Resource
@@ -65,7 +66,8 @@ class CategoryResource extends Resource
             Forms\Components\TextInput::make('position')
                 ->label('Ordre d\'affichage')
                 ->numeric()
-                ->default(0),
+                ->default(0)
+                ->required(),
         ]);
     }
 
@@ -107,7 +109,7 @@ class CategoryResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->before(function (Tables\Actions\DeleteBulkAction $action, \Illuminate\Support\Collection $records) {
+                        ->before(function (Tables\Actions\DeleteBulkAction $action, Collection $records) {
                             $blocked = $records->filter(fn (Category $category) => $category->products()->exists());
 
                             if ($blocked->isNotEmpty()) {

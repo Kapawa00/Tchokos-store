@@ -32,7 +32,7 @@ class BannerResource extends Resource
             Forms\Components\TextInput::make('title')->label('Titre')->required(),
             Forms\Components\TextInput::make('subtitle')->label('Sous-titre'),
             Forms\Components\TextInput::make('link_url')->label('Lien (URL au clic)')->url(),
-            Forms\Components\TextInput::make('position')->label('Ordre')->numeric()->default(0),
+            Forms\Components\TextInput::make('position')->label('Ordre')->numeric()->default(0)->required(),
             Forms\Components\Toggle::make('active')->label('Active')->default(true),
             Forms\Components\FileUpload::make('image_url')
                 ->label('Image de la bannière')

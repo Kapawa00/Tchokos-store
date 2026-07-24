@@ -35,7 +35,8 @@ class MediaRelationManager extends RelationManager
             Forms\Components\TextInput::make('position')
                 ->label('Ordre d\'affichage')
                 ->numeric()
-                ->default(0),
+                ->default(0)
+                ->required(),
 
             // Upload de l'image (format portrait 4:5 recommandé, fond clair).
             Forms\Components\FileUpload::make('url')

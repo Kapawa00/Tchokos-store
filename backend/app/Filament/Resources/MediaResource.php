@@ -59,7 +59,7 @@ class MediaResource extends Resource
                 ->directory('produits/posters')
                 ->visible(fn (Forms\Get $get) => $get('type') === MediaType::Video->value)
                 ->columnSpanFull(),
-            Forms\Components\TextInput::make('position')->label('Ordre dans le produit')->numeric()->default(0),
+            Forms\Components\TextInput::make('position')->label('Ordre dans le produit')->numeric()->default(0)->required(),
             Forms\Components\Toggle::make('is_featured_reel')->label('Dans le mur de reels'),
         ]);
     }
