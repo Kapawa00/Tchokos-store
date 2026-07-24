@@ -78,7 +78,8 @@ class MediaRelationManager extends RelationManager
                 ->schema([
                     Forms\Components\Toggle::make('is_featured_reel')
                         ->label('Afficher dans le mur de reels')
-                        ->default(true),
+                        ->helperText('Décoché par défaut : ajouter une vidéo au produit ne l\'affiche pas ailleurs tant que ce n\'est pas activé ici.')
+                        ->default(false),
                     Forms\Components\TextInput::make('reel_position')
                         ->label('Position dans le mur')
                         ->numeric(),
