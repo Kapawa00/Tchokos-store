@@ -27,16 +27,18 @@ export default function ReelWall({ reels, preview = false }) {
   return (
     <section className="bg-espresso">
       <Container className="py-14 sm:py-20">
-        <div className="mb-6 flex items-end justify-between gap-4">
-          <div>
-            <h2 className="font-display text-2xl font-semibold text-cream sm:text-3xl">
-              Nos articles en vidéo
-            </h2>
-            <p className="mt-1 text-sm text-cream/70">
-              Découvrez nos pièces en mouvement
-            </p>
-          </div>
-          {preview && (
+        {/* En preview (accueil) uniquement : la page /videos a déjà son
+            propre en-tête (titre + décompte), inutile de le répéter ici. */}
+        {preview && (
+          <div className="mb-6 flex items-end justify-between gap-4">
+            <div>
+              <h2 className="font-display text-2xl font-semibold text-cream sm:text-3xl">
+                Nos articles en vidéo
+              </h2>
+              <p className="mt-1 text-sm text-cream/70">
+                Découvrez nos pièces en mouvement
+              </p>
+            </div>
             <Link
               href="/videos"
               className="inline-flex shrink-0 items-center gap-1 text-sm font-medium text-camel transition-colors hover:text-cream focus-visible:outline-none focus-visible:underline"
@@ -44,8 +46,8 @@ export default function ReelWall({ reels, preview = false }) {
               Toutes les vidéos
               <ArrowRightIcon className="h-4 w-4" />
             </Link>
-          )}
-        </div>
+          </div>
+        )}
 
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
           {displayed.map((reel) => (
